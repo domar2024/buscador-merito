@@ -85,6 +85,13 @@ button.clear:hover{background:#f1f5fb}
  #q{font-size:17px}.mc-name{font-size:20px}
  body::after{background-size:210px 210px;opacity:.06}
 }
+
+/* Mensaje motivador (no está en la lista) */
+.motiv{background:linear-gradient(135deg,#fffaf0,#fff5df);border:1px solid #f0e0b4;border-radius:18px;padding:24px 22px;margin:16px 0 0;text-align:center;box-shadow:0 10px 30px rgba(10,37,64,.08)}
+.motiv .mbig{font-size:42px;margin-bottom:4px}
+.motiv .mtitle{font-family:"Playfair Display",Georgia,serif;font-size:20px;font-weight:700;color:#8a6d12;margin:0 0 10px;line-height:1.3}
+.motiv .mtext{margin:0 0 8px;color:#5b4a1e;font-size:14.5px;line-height:1.65}
+.warn code{background:#fff;border:1px solid #e3cfa0;border-radius:6px;padding:1px 7px;font-size:13px;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -158,17 +165,26 @@ function card(r){
   +'</div></div>';
 }
 const EMPTY='<div class="placeholder"><div class="big">🎓</div><div>Escribe un número de matrícula para consultar la ficha.</div></div>';
+function validFormat(x){ const t=(x||'').trim(); return /^\d{9}$/.test(t) || /^\d{6}$/.test(t) || /^[A-Za-z]{2}\d{4}$/.test(t); }
 function render(){
   const raw=$('#q').value.trim();
   const out=$('#out');
   if(!raw){ out.innerHTML=EMPTY; return; }
+  // 1) Verificar el FORMATO de la matrícula
+  if(!validFormat(raw)){
+    out.innerHTML = '<div class="warn"><b>🔎 Revisa el formato de la matrícula.</b><br>Debe escribirse así:<br>'
+      + '• <b>9 dígitos</b> — ej. <code>100817833</code><br>'
+      + '• o con letras al inicio — ej. <code>BI0513</code></div>';
+    return;
+  }
+  // 2) Buscar (coincidencia exacta con matrícula completa)
   const q=norm(raw), qd=digits(raw);
   const exact=DATA.filter(r=> norm(r[0])===q || (qd && digits(r[0])===qd));
   if(!exact.length){
-    const partial=DATA.some(r=>{ const m=norm(r[0]); return m.startsWith(q)||(qd&&digits(r[0]).startsWith(qd)); });
-    out.innerHTML = partial
-      ? '<div class="warn">Matrícula <b>incompleta</b>. Escribe el número <b>completo</b> para ver la ficha.</div>'
-      : '<div class="warn">No se encontró esa matrícula. Verifica el número e intenta de nuevo.</div>';
+    out.innerHTML = '<div class="motiv"><div class="mbig">🌟</div>'
+      + '<p class="mtitle">Tu nombre aún no está en esta lista… ¡pero tu historia no termina aquí!</p>'
+      + '<p class="mtext">El mérito se construye con constancia: cada día de estudio y cada esfuerzo cuentan. Sigue dando lo mejor de ti por tus metas — <b>el próximo reconocimiento puede llevar tu nombre</b>. 🎓💪</p>'
+      + '<p class="mtext">Si crees que es un error o necesitas más información, escríbenos por <b>WhatsApp</b> (abajo).</p></div>';
     return;
   }
   out.innerHTML=exact.slice(0,20).map(card).join('');
