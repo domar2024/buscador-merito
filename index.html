@@ -37,6 +37,11 @@ button.clear{border:1px solid var(--line);background:#fff;border-radius:14px;pad
 .badge{display:inline-block;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;border-radius:999px;padding:2px 9px;font-size:12px;margin-left:8px;vertical-align:middle}
 .warn{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:14px;padding:14px 16px;margin:16px 0 0;font-size:15px}
 @media(max-width:640px){.hbrand .logo{height:58px;width:58px}.hbrand h1{font-size:18px}#q{font-size:17px}.card .name{font-size:20px}}
+
+/* Fondo con la imagen (un poco transparente, tipo marca de agua) */
+body{position:relative}
+body::before{content:"";position:fixed;inset:0;background:url("assets/bg-fesd.png") center center/contain no-repeat;opacity:.10;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+header,.wrap{position:relative;z-index:1}
 </style>
 </head>
 <body>
