@@ -108,8 +108,9 @@ $('#matricula').textContent = g('matricula','—');
 $('#indice').textContent = g('indice','—');
 const per = g('periodo','2026-10');
 $('#periodoTxt').textContent = per;
-const hoy = new Date().toLocaleDateString('es-DO',{day:'numeric',month:'long',year:'numeric'});
-$('#lugar').textContent = 'Dado en Higüey, República Dominicana, a los ' + hoy + '.';
+function setFecha(){ const hoy = new Date().toLocaleDateString('es-DO',{day:'numeric',month:'long',year:'numeric'}); $('#lugar').textContent = 'Dado en Higüey, República Dominicana, a los ' + hoy + '.'; }
+setFecha();
+window.addEventListener('beforeprint', setFecha);
 function fit(){ const s=Math.min(1,(window.innerWidth-20)/1122); const el=$('#scaler'); el.style.transform='scale('+s+')'; el.style.height=(793*s)+'px'; }
 window.addEventListener('resize',fit); fit();
 </script>
