@@ -174,7 +174,9 @@ const EMPTY='<div class="placeholder"><div class="big">🎓</div><div>Escribe un
 function validFormat(x){ const t=(x||'').trim(); return /^\d{9}$/.test(t) || /^\d{6}$/.test(t) || /^[A-Za-z]{2}\d{4}$/.test(t); }
 let _bt=null,_last="";
 function beacon(mat,f){ try{ fetch('/api/c?m='+encodeURIComponent(mat)+'&f='+f,{keepalive:true}); }catch(e){} }
-function scheduleBeacon(mat,f){ clearTimeout(_bt); _bt=setTimeout(()=>{ if(mat!==_last){ _last=mat; beacon(mat,f); } },1100); }
+function scheduleBeacon(mat,f){ clearTimeout(_bt); _bt=setTimeout(()=>{ if(mat!==_last){ _last=mat; beacon(mat,f); } },1400); }
+function isPrefixOfData(t){ const n=norm(t); return DATA.some(r=> norm(r[0]).startsWith(n)); }
+function shouldLog(raw,found){ if(found) return true; const t=(raw||'').trim(); const full=/^\d{9}$/.test(t)||/^[A-Za-z]{2}\d{4}$/.test(t); if(!full) return false; if(isPrefixOfData(t)) return false; return true; }
 function render(){
   const raw=$('#q').value.trim();
   const out=$('#out');
@@ -194,7 +196,7 @@ function render(){
       + '<p class="mtitle">Tu nombre aún no está en esta lista… ¡pero tu historia no termina aquí!</p>'
       + '<p class="mtext">El mérito se construye con constancia: cada día de estudio y cada esfuerzo cuentan. Sigue dando lo mejor de ti por tus metas — <b>el próximo reconocimiento puede llevar tu nombre</b>. 🎓💪</p>'
       + '<p class="mtext">Si crees que es un error o necesitas más información, escríbenos por <b>WhatsApp</b> (abajo).</p></div>';
-    scheduleBeacon(raw,0);
+    if(shouldLog(raw,false)) scheduleBeacon(raw,0);
     return;
   }
   out.innerHTML=exact.slice(0,20).map(card).join('');
