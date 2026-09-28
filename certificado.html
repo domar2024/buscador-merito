@@ -52,7 +52,7 @@ html,body{margin:0;background:#dfe5ee;font-family:Inter,system-ui,Arial,sans-ser
 .sigline .nm{font-family:Cinzel,serif;font-size:12px;letter-spacing:1px;color:var(--navy)}
 .sigline .rl{font-size:11px;color:#6b7a8f}
 .place{margin-top:14px;font-size:12.5px;color:#6b7a8f;font-style:italic}
-@media print{@page{size:A4 landscape;margin:0}.toolbar{display:none}.wraper{padding:0}.scaler{transform:none!important}body{background:#fff}.cert{box-shadow:none;border-radius:0}}
+@media print{@page{size:A4 landscape;margin:0}.toolbar{display:none}.wraper{padding:0}.scaler{transform:none!important;zoom:1!important}body{background:#fff}.cert{box-shadow:none;border-radius:0}}
 </style>
 </head>
 <body>
@@ -111,7 +111,7 @@ $('#periodoTxt').textContent = per;
 function setFecha(){ const hoy = new Date().toLocaleDateString('es-DO',{day:'numeric',month:'long',year:'numeric'}); $('#lugar').textContent = 'Dado en Higüey, República Dominicana, a los ' + hoy + '.'; }
 setFecha();
 window.addEventListener('beforeprint', setFecha);
-function fit(){ const s=Math.min(1,(window.innerWidth-20)/1122); const el=$('#scaler'); el.style.transform='scale('+s+')'; el.style.height=(793*s)+'px'; }
+function fit(){ const s=Math.max((window.innerWidth-16)/1122, 0.5); const el=$('#scaler'); el.style.transform='none'; el.style.height='auto'; el.style.zoom=s; }
 window.addEventListener('resize',fit); fit();
 </script>
 </body>
