@@ -9,7 +9,7 @@
 <style>
 :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--brand:#1d4ed8;--brand2:#0ea5e9;--ok:#16a34a;--soft:#f1f5f9;--navy:#081947}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#eef2f7,#e6ecf4);color:var(--ink);min-height:100vh}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:url("assets/bg-fesd.png") center center / cover no-repeat fixed,#0b1c4a;color:var(--ink);min-height:100vh}
 header{background:linear-gradient(120deg,#081947,#1d4ed8 60%,#0ea5e9);color:#fff;padding:24px 16px 26px}
 .hbrand{max-width:1000px;margin:0 auto;display:flex;gap:16px;align-items:center}
 .hbrand .logo{height:72px;width:72px;object-fit:contain;background:#fff;border-radius:16px;padding:7px;box-shadow:0 8px 22px rgba(2,8,23,.35);flex:none}
@@ -22,7 +22,7 @@ header{background:linear-gradient(120deg,#081947,#1d4ed8 60%,#0ea5e9);color:#fff
 #q:focus{outline:none;box-shadow:0 0 0 4px #bfdbfe}
 button.clear{border:1px solid var(--line);background:#fff;border-radius:14px;padding:0 16px;font-size:19px;cursor:pointer;color:var(--muted)}
 .hint{color:var(--muted);font-size:13px;margin:10px 2px 0}
-.placeholder{text-align:center;color:var(--muted);padding:46px 16px}
+.placeholder{text-align:center;color:var(--ink);background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:16px;padding:40px 18px;margin:16px 0 0;box-shadow:0 10px 30px rgba(8,25,71,.10)}
 .placeholder .big{font-size:46px;margin-bottom:10px}
 .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin:16px 0 0;box-shadow:0 10px 30px rgba(8,25,71,.10);border-left:7px solid var(--brand);animation:pop .18s ease}
 .card.exc{border-left-color:var(--ok)}
@@ -38,9 +38,7 @@ button.clear{border:1px solid var(--line);background:#fff;border-radius:14px;pad
 .warn{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:14px;padding:14px 16px;margin:16px 0 0;font-size:15px}
 @media(max-width:640px){.hbrand .logo{height:58px;width:58px}.hbrand h1{font-size:18px}#q{font-size:17px}.card .name{font-size:20px}}
 
-/* Fondo con la imagen (un poco transparente, tipo marca de agua) */
-body{position:relative}
-body::before{content:"";position:fixed;inset:0;background:url("assets/bg-fesd.png") center center/contain no-repeat;opacity:.10;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+/* Fondo: imagen a pantalla completa (sin transparencia) */
 header,.wrap{position:relative;z-index:1}
 </style>
 </head>
@@ -57,10 +55,10 @@ header,.wrap{position:relative;z-index:1}
 <div class="wrap">
   <div class="panel">
     <div class="search">
-      <input id="q" type="search" inputmode="numeric" placeholder="Escribe el N.º de matrícula…  Ej: 100817833" autocomplete="off" autofocus>
+      <input id="q" type="search" placeholder="Escribe el N.º de matrícula completo…  Ej: 100817833" autocomplete="off" autofocus>
       <button class="clear" id="clr" title="Limpiar">✕</button>
     </div>
-    <div class="hint">Introduce el número de matrícula para ver la ficha del estudiante.</div>
+    <div class="hint">Escribe el número <b>completo</b> de matrícula para ver la ficha del estudiante.</div>
   </div>
   <div id="out"></div>
 </div>
@@ -90,12 +88,15 @@ function render(){
   const out=$('#out');
   if(!raw){ out.innerHTML=EMPTY; return; }
   const q=norm(raw), qd=digits(raw);
-  const rows=DATA.filter(r=>{ const m=norm(r[0]); return m.includes(q)||(qd&&digits(r[0]).includes(qd)); });
-  if(!rows.length){ out.innerHTML='<div class="warn">No se encontró ninguna matrícula con ese número. Verifica e intenta de nuevo.</div>'; return; }
-  // ordenar por cercanía: coincidencia exacta primero
-  rows.sort((a,b)=>{ const ea=digits(a[0])===qd?-1:0, eb=digits(b[0])===qd?-1:0; return ea-eb; });
-  const shown=rows.slice(0,20);
-  out.innerHTML=(rows.length>1?'<div class="hint" style="margin-top:14px">'+rows.length+' coincidencias:</div>':'')+shown.map(card).join('');
+  const exact=DATA.filter(r=> norm(r[0])===q || (qd && digits(r[0])===qd));
+  if(!exact.length){
+    const partial=DATA.some(r=>{ const m=norm(r[0]); return m.startsWith(q)||(qd&&digits(r[0]).startsWith(qd)); });
+    out.innerHTML = partial
+      ? '<div class="warn">Matrícula <b>incompleta</b>. Escribe el número <b>completo</b> para ver la ficha.</div>'
+      : '<div class="warn">No se encontró esa matrícula. Verifica el número.</div>';
+    return;
+  }
+  out.innerHTML=exact.slice(0,20).map(card).join('');
 }
 $('#q').addEventListener('input',render);
 $('#clr').addEventListener('click',()=>{$('#q').value='';render();$('#q').focus();});
