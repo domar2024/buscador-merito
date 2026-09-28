@@ -14,7 +14,8 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#f7f9fc,#e8eef7);min-height:100vh;-webkit-font-smoothing:antialiased}
-.bg-logo{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(92vw,720px);height:auto;z-index:0;pointer-events:none;user-select:none;opacity:.16}
+/* Marca de agua del logo en todo el diseño */
+body::after{content:"";position:fixed;inset:0;background-image:url("assets/fondo-fesd16.png");background-repeat:repeat;background-size:300px 300px;background-position:center;opacity:.06;pointer-events:none;z-index:1}
 /* HEADER */
 .site-header{position:relative;z-index:2;background:
   radial-gradient(1200px 400px at 80% -40%,rgba(47,127,224,.55),transparent 60%),
@@ -82,12 +83,11 @@ button.clear:hover{background:#f1f5fb}
 @media(max-width:640px){
  .htext h1{font-size:22px}.brand{height:64px;width:64px;border-radius:16px}
  #q{font-size:17px}.mc-name{font-size:20px}
- .bg-logo{width:min(96vw,460px);opacity:.13}
+ body::after{background-size:210px 210px;opacity:.06}
 }
 </style>
 </head>
 <body>
-<img class="bg-logo" src="assets/fondo-fesd16.png" alt="">
 <header class="site-header">
   <div class="hwrap">
     <img class="brand" src="assets/logo-fesd16.png" alt="FESD-16">
